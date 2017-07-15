@@ -6,31 +6,52 @@ import org.springframework.data.domain.Pageable;
 import com.worldline.fpl.recruitment.entity.Transaction;
 
 /**
- * Transaction repository
- * 
- * @author A525125
+ * Transaction repository.
  *
+ * @author A525125
  */
 public interface TransactionRepository {
 
 
 	/**
-	 * Get transaction by Id
+	 * Get transaction by Id.
 	 *
-	 * @param id
-	 *            id of the transaction to get
+	 * @param id            id of the transaction to get
 	 * @return the transaction corresponding to the given id or null
 	 */
 	Transaction findById(String id);
 
 	/**
-	 * Get transactions by account
-	 * 
-	 * @param accountId
-	 *            the account id
-	 * @param p
-	 *            the pageable information
-	 * @return
+	 * Get transactions by account.
+	 *
+	 * @param accountId            the account id
+	 * @param p            the pageable information
+	 * @return the transactions by account
 	 */
 	Page<Transaction> getTransactionsByAccount(String accountId, Pageable p);
-}
+	
+	
+	/**
+	 * Delete transaction by id.
+	 *
+	 * @param transactionId the transaction id
+	 */
+	void deleteTransactionById(String accountId,String transactionId);
+	
+	/**
+	 * Adds the transaction.
+	 *
+	 * @param transaction the transaction
+	 * @return the transaction
+	 */
+	Transaction addTransaction(Transaction transaction);
+	
+	/**
+	 * Update transaction.
+	 *
+	 * @param transaction the transaction
+	 * @return the transaction
+	 */
+	Transaction updateTransaction(Transaction transaction);
+		
+}	

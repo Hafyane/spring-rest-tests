@@ -16,17 +16,24 @@ import com.worldline.fpl.recruitment.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Implementation of {@link TransactionController}
- * 
- * @author A525125
+ * Implementation of {@link TransactionController}.
  *
+ * @author A525125
  */
+
+/** The Constant log. */
 @Slf4j
 @RestController
 public class TransactionControllerImpl implements TransactionController {
 
+	/** The transaction service. */
 	private TransactionService transactionService;
 
+	/**
+	 * Instantiates a new transaction controller impl.
+	 *
+	 * @param transactionService the transaction service
+	 */
 	@Autowired
 	public TransactionControllerImpl(TransactionService transactionService) {
 		this.transactionService = transactionService;
@@ -44,4 +51,14 @@ public class TransactionControllerImpl implements TransactionController {
 		}
 		return ResponseEntity.ok().body(page);
 	}
+
+
+	@Override
+	public ResponseEntity<Void> transactionDelete(@PathVariable("accountId") String accountId,@PathVariable("transactionId")String transactionId) {
+		log.debug("REST request to delete Transaction : {}", transactionId);
+		transactionService.deleteTransaction(accountId , transactionId);
+		return ResponseEntity.ok().build();
+	}
+
+
 }

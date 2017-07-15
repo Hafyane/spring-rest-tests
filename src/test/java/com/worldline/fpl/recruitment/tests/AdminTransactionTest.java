@@ -1,16 +1,24 @@
 package com.worldline.fpl.recruitment.tests;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.io.IOException;
-import java.io.StringWriter;
 
-import org.apache.commons.io.IOUtils;
+
+
+
+
+
+import java.math.BigDecimal;
 import org.junit.Test;
 import org.springframework.http.MediaType;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.worldline.fpl.recruitment.entity.Transaction;
+
 
 /**
  * Account test
@@ -22,95 +30,98 @@ public class AdminTransactionTest extends AbstractTest {
 
 	@Test
 	public void createTransaction() throws Exception {
-		String request = getRequest("createOk");
+		
+		Transaction transaction= new Transaction();
+		transaction.setId("4");
+		transaction.setAccountId("1");
+		transaction.setNumber("123243");
+		transaction.setBalance(BigDecimal.valueOf(12.12));
+		
+	    ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson=ow.writeValueAsString(transaction);
 
-		mockMvc.perform(
-				post("/accounts/1/transactions").contentType(
-						MediaType.APPLICATION_JSON).content(request))
-				.andExpect(status().isCreated());
+	    mockMvc.perform(post("/admin/transaction").contentType(MediaType.APPLICATION_JSON_UTF8)
+	        .content(requestJson))
+	        .andExpect(status().isCreated());
 	}
 
 	@Test
-	public void createTransactionBadRequest() throws Exception {
-		String request = getRequest("createBadRequest");
+	public void createTransactionBadParam() throws Exception {
 
-		mockMvc.perform(
-				post("/accounts/1/transactions").contentType(
-						MediaType.APPLICATION_JSON).content(request))
-				.andExpect(status().isBadRequest());
+		Transaction transaction= new Transaction();
+		transaction.setId(null);  //  id is null
+		transaction.setAccountId("1");
+		transaction.setNumber("123243");
+		transaction.setBalance(BigDecimal.valueOf(12.12));
+		
+	    ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson=ow.writeValueAsString(transaction);
+
+	    mockMvc.perform(post("/admin/transaction").contentType(MediaType.APPLICATION_JSON_UTF8)
+	        .content(requestJson))
+	        .andExpect(status().isBadRequest());
+
 	}
 
 	@Test
 	public void updateTransaction() throws Exception {
-		String request = getRequest("updateOk");
+		
+		Transaction transaction= new Transaction();
+		transaction.setId("1");
+		transaction.setAccountId("1");
+		transaction.setNumber("44444");
+		transaction.setBalance(BigDecimal.valueOf(12.12));
+		
+	    ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson=ow.writeValueAsString(transaction);
 
-		mockMvc.perform(
-				put("/accounts/1/transactions/3").contentType(
-						MediaType.APPLICATION_JSON).content(request))
-				.andExpect(status().isNoContent());
-	}
-
-	@Test
-	public void updateTransactionWhichNotBelongToTheAccount() throws Exception {
-		String request = getRequest("updateOk");
-
-		mockMvc.perform(
-				put("/accounts/2/transactions/3").contentType(
-						MediaType.APPLICATION_JSON).content(request))
-				.andExpect(status().isForbidden());
+	    mockMvc.perform(put("/admin/transaction").contentType(MediaType.APPLICATION_JSON_UTF8)
+	        .content(requestJson))
+	        .andExpect(status().isOk());
 	}
 
 	@Test
 	public void updateUnexistingTransaction() throws Exception {
-		String request = getRequest("updateOk");
+		Transaction transaction= new Transaction();
+		transaction.setId("9");   //  Unexisting Transaction
+		transaction.setAccountId("1");
+		transaction.setNumber("44444");
+		transaction.setBalance(BigDecimal.valueOf(12.12));
+		
+	    ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson=ow.writeValueAsString(transaction);
 
-		mockMvc.perform(
-				put("/accounts/1/transactions/8").contentType(
-						MediaType.APPLICATION_JSON).content(request))
-				.andExpect(status().isNotFound());
+	    mockMvc.perform(put("/admin/transaction").contentType(MediaType.APPLICATION_JSON_UTF8)
+	        .content(requestJson))
+	        .andExpect(status().isNotFound());
 	}
 
 	@Test
 	public void updateTransactionBadRequest() throws Exception {
-		String request = "test";
+		Transaction transaction= new Transaction();
+		transaction.setId(null);   //  id is null
+		transaction.setAccountId("1");
+		transaction.setNumber("44444");
+		transaction.setBalance(BigDecimal.valueOf(12.12));
+		
+	    ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson=ow.writeValueAsString(transaction);
 
-		mockMvc.perform(
-				put("/accounts/1/transactions/3").contentType(
-						MediaType.APPLICATION_JSON).content(request))
-				.andExpect(status().isBadRequest());
+	    mockMvc.perform(put("/admin/transaction").contentType(MediaType.APPLICATION_JSON_UTF8)
+	        .content(requestJson))
+	        .andExpect(status().isBadRequest());
 	}
 
-	@Test
-	public void deleteTransaction() throws Exception {
-		mockMvc.perform(delete("/accounts/1/transactions/1")).andExpect(
-				status().isNoContent());
-	}
 
-	@Test
-	public void deleteTransactionWhichNotBelongToTheAccount() throws Exception {
-		mockMvc.perform(delete("/accounts/2/transactions/2")).andExpect(
-				status().isForbidden());
-	}
-
-	@Test
-	public void deleteUnexistingTransaction() throws Exception {
-		mockMvc.perform(delete("/accounts/1/transactions/99")).andExpect(
-				status().isNotFound());
-	}
-
-	/**
-	 * Get json request from test file
-	 * 
-	 * @param name
-	 *            the filename
-	 * @return the request
-	 * @throws IOException
-	 */
-	private String getRequest(String name) throws IOException {
-		StringWriter writer = new StringWriter();
-		IOUtils.copy(Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream("json/" + name + ".json"), writer);
-		return writer.toString();
-	}
 
 }
