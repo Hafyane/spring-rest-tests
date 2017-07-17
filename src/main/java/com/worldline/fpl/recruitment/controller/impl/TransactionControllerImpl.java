@@ -52,13 +52,11 @@ public class TransactionControllerImpl implements TransactionController {
 		return ResponseEntity.ok().body(page);
 	}
 
-
+	
 	@Override
 	public ResponseEntity<Void> transactionDelete(@PathVariable("accountId") String accountId,@PathVariable("transactionId")String transactionId) {
 		log.debug("REST request to delete Transaction : {}", transactionId);
 		transactionService.deleteTransaction(accountId , transactionId);
 		return ResponseEntity.ok().build();
 	}
-
-
 }

@@ -3,3 +3,5 @@
 /bin/*
 .classpath
 .project
+/.apt_generated/
+/pom.xml

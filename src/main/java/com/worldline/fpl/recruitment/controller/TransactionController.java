@@ -1,6 +1,5 @@
 package com.worldline.fpl.recruitment.controller;
 
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -43,8 +42,6 @@ public interface TransactionController {
 	 * @return the response entity
 	 */
 	@RequestMapping(value = "/{transactionId}", method = RequestMethod.DELETE)
-	ResponseEntity<Void> transactionDelete(@PathVariable("accountId") String accountId,
+	ResponseEntity<Void> transactionDelete(
 			@PathVariable("transactionId") String transactionId);
-
-
 }
